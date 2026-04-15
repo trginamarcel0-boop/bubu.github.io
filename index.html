@@ -2,43 +2,50 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>Neked ❤️</title>
+<title>❤️ Boldog születésnapot ❤️</title>
 
 <style>
 body {
     margin: 0;
-    height: 100vh;
     font-family: sans-serif;
+    height: 100vh;
+    overflow: hidden;
     background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
     text-align: center;
 }
 
-.container {
-    width: 100%;
-}
-
-.card {
+.scene {
     display: none;
-    background: rgba(255,255,255,0.15);
-    padding: 40px;
+    width: 90%;
+    max-width: 600px;
+    padding: 30px;
+    background: rgba(255,255,255,0.12);
     border-radius: 20px;
     backdrop-filter: blur(10px);
-    animation: fadeIn 2s ease forwards;
+    animation: fadeIn 1.2s ease forwards;
+}
+
+.active {
+    display: block;
 }
 
 button {
-    padding: 15px 25px;
+    padding: 12px 20px;
+    margin: 10px;
     border: none;
     border-radius: 10px;
     background: white;
     color: #ff4d6d;
-    font-size: 16px;
     cursor: pointer;
-    margin: 10px;
+    font-size: 16px;
+}
+
+h1,h2,p {
+    margin: 10px 0;
 }
 
 .heart {
@@ -56,41 +63,121 @@ button {
     from { opacity: 0; transform: scale(0.8); }
     to { opacity: 1; transform: scale(1); }
 }
+
+/* Tűzijáték canvas */
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
 </style>
 </head>
-
 <body>
 
-<div class="container">
+<canvas id="fireworks"></canvas>
 
-    <!-- KÉRDŐÍV -->
-    <div id="quiz">
-        <h1>Tudod milyen nap van? ❤️</h1>
-        <button onclick="showCard()">Igen </button>
-        <button onclick="showCard()">Nem </button>
-    </div>
-
-    <!-- MEGLEPETÉS -->
-    <div class="card" id="card">
-        <div class="heart">❤️</div>
-        <h1>Pedig ez a te napod szivem!</h1>
-        <p>Boldog születésnapot💕</p>
-        <p>Sajnálom, hogy nem ölelhetlek meg és adhatok egy cuppanost💖</p>
-        <p>Szeretlek! 💖</p>
-    </div>
-
+<!-- 1. JELENET -->
+<div class="scene active" id="scene1">
+    <h1>Tudod milyen nap van? ❤️</h1>
+    <button onclick="nextScene()">Igen</button>
+    <button onclick="nextScene()">Nem</button>
 </div>
 
-<!-- ZENE -->
+<!-- 2. JELENET -->
+<div class="scene" id="scene2">
+    <h2>Van egy titkom... 🤫</h2>
+    <p>Készen állsz?</p>
+    <button onclick="nextScene()">Igen</button>
+</div>
+
+<!-- 3. JELENET -->
+<div class="scene" id="scene3">
+    <div class="heart">❤️</div>
+    <h1>Boldog születésnapot!</h1>
+    <p>Ez a nap csak rólad szól 💖</p>
+    <button onclick="nextScene()">Tovább</button>
+</div>
+
+<!-- 4. JELENET -->
+<div class="scene" id="scene4">
+    <h2>Szeretném, ha tudnád...</h2>
+    <p>Fontos vagy nekem 💕</p>
+    <p>És bár most nem vagyok ott, gondolok rád 💖</p>
+    <button onclick="nextScene()">Utolsó üzenet</button>
+</div>
+
+<!-- 5. JELENET -->
+<div class="scene" id="scene5">
+    <div class="heart">🎉❤️🎉</div>
+    <h1>Meglepetés!!!</h1>
+    <p>Legyen csodás napod! 💖</p>
+    <p>Sok boldogságot! 🎂</p>
+</div>
+
 <audio id="music" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
 <script>
-function showCard() {
-    document.getElementById("quiz").style.display = "none";
-    document.getElementById("card").style.display = "block";
+let currentScene = 1;
 
-    let music = document.getElementById("music");
-    music.play();
+function nextScene() {
+    document.getElementById("scene" + currentScene).classList.remove("active");
+    currentScene++;
+
+    let next = document.getElementById("scene" + currentScene);
+    if (next) {
+        next.classList.add("active");
+    }
+
+    if (currentScene === 3) {
+        document.getElementById("music").play().catch(()=>{});
+        startFireworks();
+    }
+}
+
+// Egyszerű tűzijáték
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+function createParticle() {
+    return {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        vx: (Math.random() - 0.5) * 6,
+        vy: (Math.random() - 0.5) * 6,
+        life: 100
+    };
+}
+
+function startFireworks() {
+    setInterval(() => {
+        for (let i = 0; i < 30; i++) {
+            particles.push(createParticle());
+        }
+    }, 800);
+
+    animate();
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+
+        ctx.fillStyle = "white";
+        ctx.fillRect(p.x, p.y, 3, 3);
+
+        if (p.life <= 0) particles.splice(i, 1);
+    });
+
+    requestAnimationFrame(animate);
 }
 </script>
 
