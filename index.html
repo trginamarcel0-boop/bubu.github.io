@@ -8,24 +8,37 @@
 body {
     margin: 0;
     height: 100vh;
+    font-family: sans-serif;
     background: linear-gradient(135deg, #ff758c, #ff7eb3);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: sans-serif;
     color: white;
     text-align: center;
 }
 
+.container {
+    width: 100%;
+}
+
 .card {
+    display: none;
     background: rgba(255,255,255,0.15);
     padding: 40px;
     border-radius: 20px;
     backdrop-filter: blur(10px);
+    animation: fadeIn 2s ease forwards;
 }
 
-h1 {
-    font-size: 2.5em;
+button {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    color: #ff4d6d;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px;
 }
 
 .heart {
@@ -38,17 +51,48 @@ h1 {
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
 }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
 </style>
 </head>
 
 <body>
 
-<div class="card">
-    <div class="heart">❤️</div>
-    <h1>Boldog születésnapot!</h1>
-    <p>Te vagy a legfontosabb számomra 💕</p>
-    <p>Szeretlek! 💖</p>
+<div class="container">
+
+    <!-- KÉRDŐÍV -->
+    <div id="quiz">
+        <h1>Tudod milyen nap van? ❤️</h1>
+        <button onclick="showCard()">Igen </button>
+        <button onclick="showCard()">Nem </button>
+    </div>
+
+    <!-- MEGLEPETÉS -->
+    <div class="card" id="card">
+        <div class="heart">❤️</div>
+        <h1>Pedig ez a te napod szivem!</h1>
+        <p>Boldog születésnapot💕</p>
+        <p>Sajnálom, hogy nem ölelhetlek meg és adhatok egy cuppanost💖</p>
+        <p>Szeretlek! 💖</p>
+    </div>
+
 </div>
+
+<!-- ZENE -->
+<audio id="music" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+<script>
+function showCard() {
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("card").style.display = "block";
+
+    let music = document.getElementById("music");
+    music.play();
+}
+</script>
 
 </body>
 </html>
